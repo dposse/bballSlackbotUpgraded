@@ -12,3 +12,13 @@ The root package.json is in the `workspaces` directory, using yarn workspaces
 
     cd workspaces
     yarn
+
+If you do not have [Serverless](https://serverless.com/) installed, [install it!](https://serverless.com/framework/docs/getting-started/).
+
+---
+
+### Usage
+
+To deploy, run
+
+    serverless deploy
