@@ -1,0 +1,8 @@
+{
+  "name": "slack-api",
+  "version": "1.0.0",
+  "dependencies": {
+    "cross-env": "5.0.5",
+    "mlb-api": "1.0.0"
+  }
+}
