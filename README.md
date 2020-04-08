@@ -22,3 +22,17 @@ If you do not have [Serverless](https://serverless.com/) installed, [install it!
 To deploy, run
 
     serverless deploy
+
+### Random notes
+
+All `serverless` commands can be run with `sls`
+
+The initial setup for this project ran `serverless create` in the root directory, which created and deployed successfully. We decided to use yarn workspaces, and webpack did not automatically handle `node_modules` being outside the workspace where `serverless create ` was run. To fix, the externals line in webpack.config.js is changed from
+
+    externals: [nodeExternals()],
+
+to
+
+    externals: [nodeExternals({
+      modulesDir: path.resolve(__dirname, '../node_modules')
+    })],
