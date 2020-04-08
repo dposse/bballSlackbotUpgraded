@@ -28,3 +28,6 @@ functions:
     events:
       - schedule: cron(0 13 * * ? *)
       # - schedule: rate(1 minute)
+    # role: cronRole
+  checkMLBGamesLambda:
+    handler: handler.checkMLBGamesLambda
