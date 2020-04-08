@@ -1,0 +1,7 @@
+{
+  "name": "serverless-wrappers",
+  "version": "1.0.0",
+  "dependencies": {
+    "cross-env": "7.0.2"
+  }
+}

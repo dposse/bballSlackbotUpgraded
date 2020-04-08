@@ -5,5 +5,9 @@
   "author": "Sean Dolan and Dan Posse",
   "license": "MIT",
   "private": true,
-  "workspaces": ["serverless-wrappers", "mlb-api", "slack-api"]
+  "workspaces": [
+    "serverless-wrappers",
+    "mlb-api",
+    "slack-api"
+  ]
 }
