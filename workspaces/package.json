@@ -1,0 +1,9 @@
+{
+  "name": "bball-slackbot-upgraded",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Sean Dolan and Dan Posse",
+  "license": "MIT",
+  "private": true,
+  "workspaces": ["serverless-wrappers", "mlb-api", "slack-api"]
+}
