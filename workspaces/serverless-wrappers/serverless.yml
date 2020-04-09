@@ -28,6 +28,30 @@ functions:
     events:
       - schedule: cron(0 13 * * ? *)
       # - schedule: rate(1 minute)
-    # role: cronRole
+    role: cronRole
   checkMLBGamesLambda:
     handler: handler.checkMLBGamesLambda
+
+resources:
+  Resources:
+    cronRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: cronRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: cronPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - lambda:InvokeFunction
+                  Resource: "*"
