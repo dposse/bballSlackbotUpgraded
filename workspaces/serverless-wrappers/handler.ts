@@ -13,7 +13,7 @@ interface InvokeLambdaParams {
 }
 
 // in aws this lambda is named bball-slackbot-upgraded-[dev/test/prod]-runBot
-export const runBot: Handler = async (event: ScheduledEvent, _context: Context) => {
+export const runBot: Handler = async (_event: ScheduledEvent, _context: Context) => {
   const mlbLambdaParams: InvokeLambdaParams = {
     FunctionName: 'bball-slackbot-upgraded-dev-checkMLBGamesLambda',
     InvocationType: 'RequestResponse',

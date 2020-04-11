@@ -17,6 +17,22 @@ The root package.json is in the `workspaces` directory, using yarn workspaces
 
 If you do not have [Serverless](https://serverless.com/) installed, [install it!](https://serverless.com/framework/docs/getting-started/)
 
+To use the [vscode-jest](https://github.com/jest-community/vscode-jest) extension, you need to point your workspace jest settings to package.json (or jest config) and node modules:
+
+    {
+      "jest.pathToConfig": "[your path here]\\bball-slackbot-upgraded\\workspaces\\serverless-wrappers\\package.json",
+      "jest.pathToJest": "node [your path here]/bball-slackbot-upgraded/workspaces/node_modules/jest/bin/jest.js",
+      "jest.showCoverageOnLoad": true
+    }
+
+I also had to add the following in `workspaces/serverless-wrappers/package.json` for `--watch` to work:
+
+    "jest": {
+      "modulePathIgnorePatterns": [
+        "node_modules"
+      ]
+    }
+
 ---
 
 ### Usage

@@ -1,0 +1,5 @@
+{
+  "jest.pathToConfig": "C:\\Users\\Dan\\code\\bball-slackbot-upgraded\\workspaces\\serverless-wrappers\\package.json",
+  "jest.pathToJest": "node c:/Users/Dan/code/bball-slackbot-upgraded/workspaces/node_modules/jest/bin/jest.js",
+  "jest.showCoverageOnLoad": true
+}
