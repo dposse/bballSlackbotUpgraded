@@ -21,8 +21,7 @@ To use the [vscode-jest](https://github.com/jest-community/vscode-jest) extensio
 
     {
       "jest.pathToConfig": "[your path here]\\bball-slackbot-upgraded\\workspaces\\serverless-wrappers\\package.json",
-      "jest.pathToJest": "node [your path here]/bball-slackbot-upgraded/workspaces/node_modules/jest/bin/jest.js",
-      "jest.showCoverageOnLoad": true
+      "jest.pathToJest": "node [your path here]/bball-slackbot-upgraded/workspaces/node_modules/jest/bin/jest.js"
     }
 
 I also had to add the following in `workspaces/serverless-wrappers/package.json` for `--watch` to work:
@@ -66,3 +65,5 @@ to
     externals: [nodeExternals({
       modulesDir: path.resolve(__dirname, '../node_modules')
     })],
+
+I think it would have been easier to install jest in root or `workspaces/`, but I wanted to have each workspace have its own dependencies in case a service wasn't in javascript/typescript.
