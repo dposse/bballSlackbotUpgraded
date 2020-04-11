@@ -10,7 +10,7 @@ Does a project of this scale need lambdas? No. No it does not.
 
 ### Installation
 
-The root package.json is in the `workspaces` directory, using yarn workspaces
+The root package.json is in the `workspaces/` directory, using yarn workspaces
 
     cd workspaces
     yarn
@@ -35,6 +35,8 @@ I also had to add the following in `workspaces/serverless-wrappers/package.json`
 ---
 
 ### Usage
+
+For all serverless functions make sure you are in `workspaces/serverless-wrappers/`
 
 To deploy, run
 
