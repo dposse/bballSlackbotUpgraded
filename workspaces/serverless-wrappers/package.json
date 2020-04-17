@@ -4,7 +4,7 @@
   "description": "Serverless webpack example using Typescript",
   "main": "handler.js",
   "scripts": {
-    "test": "jest --watch"
+    "test": "tsc && jest"
   },
   "dependencies": {
     "aws-sdk": "^2.656.0",
@@ -29,6 +29,7 @@
   },
   "jest": {
     "verbose": true,
+    "rootDir": "lib",
     "modulePathIgnorePatterns": [
       "node_modules"
     ],
@@ -44,7 +45,12 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "globals": {
+      "ts-jest": {
+        "isolatedModules": true
+      }
+    }
   },
   "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
   "license": "MIT"
