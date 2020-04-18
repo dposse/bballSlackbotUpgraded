@@ -20,26 +20,49 @@ export type LambdaResponse = {
     logStreamName: string
   }
 }
+
+interface IRunBotOrchestratorDependencies {
+  getMessage(): LambdaResponse,
+  sendMessage(message: string): LambdaResponse,
+}
 /////////////////////////////////////////////////////////////////////////
 
 // need aws-sdk to invoke lambdas
 const AWS = require('aws-sdk');
 const lambda = new AWS.Lambda({ region: 'us-east-1' });
 
-// in aws this lambda is named bball-slackbot-upgraded-[dev/test/prod]-runBot
-// leaving as generic Handler type as ScheduledHandler is defined as Handler<ScheduledEvent, void>
-//   if confirmed never using context, change
-export const runBot: Handler<ScheduledEvent, LambdaResponse> = async (_event: ScheduledEvent, _context: Context): Promise<LambdaResponse> => {
+// dependency injection :O
+function initDependencies(): Promise<IRunBotOrchestratorDependencies> {
   const mlbLambdaParams: InvokeLambdaParams = {
     FunctionName: 'bball-slackbot-upgraded-dev-checkMLBGamesLambda',
     InvocationType: 'RequestResponse',
     LogType: 'Tail',
     Payload: JSON.stringify({ test: 'test' })
   }
+  
+  const getMessage = () => {
+    return lambda.invoke(mlbLambdaParams).promise();
+  }
+
+  //add slack lambda when it is complete
+  const sendMessage = (message: string) => { return <LambdaResponse>{} }
+
+  return Promise.resolve({
+    getMessage,
+    sendMessage
+  })
+}
+
+const dependenciesReady = initDependencies();
+// in aws this lambda is named bball-slackbot-upgraded-[dev/test/prod]-runBot
+// leaving as generic Handler type as ScheduledHandler is defined as Handler<ScheduledEvent, void>
+//   if confirmed never using context, change
+export const runBot: Handler<ScheduledEvent, LambdaResponse> = async (_event: ScheduledEvent, _context: Context): Promise<LambdaResponse> => {
+  const { getMessage, sendMessage } = await dependenciesReady;
 
   try {
-    const mlbResponse = await lambda.invoke(mlbLambdaParams).promise();
-    console.log(`mlbResponse: `, mlbResponse);
+    const data = await getMessage()
+    console.log(`data: `, data);
   } catch (error) {
     return {
       statusCode: 500,
