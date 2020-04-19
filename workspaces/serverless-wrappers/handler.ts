@@ -15,10 +15,7 @@ type InvokeLambdaParams = {
 
 export type LambdaResponse = {
   statusCode: number,
-  body: {
-    message: string,
-    logStreamName: string
-  }
+  message: string,
 }
 
 export interface IRunBotOrchestratorDependencies {
@@ -45,7 +42,9 @@ function initDependencies(): Promise<IRunBotOrchestratorDependencies> {
   }
 
   //add slack lambda when it is complete
-  const sendMessage = (message: string) => { return <LambdaResponse>{} }
+  const sendMessage = (message: string) => { 
+    return <LambdaResponse>{} 
+  }
 
   return Promise.resolve({
     getMessage,
@@ -59,23 +58,19 @@ export async function runOrchestrator(dependencies: IRunBotOrchestratorDependenc
   const { getMessage, sendMessage } = dependencies;
   
   try {
-    const slackMessage = await getMessage()
+    const getMessageResponse: LambdaResponse = await getMessage();
+    const messageToSend: string = getMessageResponse.message;
+    await sendMessage(messageToSend);
   } catch (error) {
     return {
       statusCode: 500,
-      body: {
-        message: `error: ${error}`,
-        logStreamName: 'dev logstreamname'
-      }
+      message: `${error}`,
     }
   }
   
   return {
     statusCode: 200,
-    body: {
-      message: 'runOrchestrator completed successfully',
-      logStreamName: 'dev logstreamname'
-    }
+    message: 'runOrchestrator completed successfully',
   }
 }
 

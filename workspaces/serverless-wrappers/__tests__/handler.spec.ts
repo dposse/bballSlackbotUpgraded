@@ -19,19 +19,13 @@ describe('runOrchestrator unit tests with mocks', () => {
         getMessage: function(): LambdaResponse {
           return {
             statusCode: 200,
-            body: {
-              message: 'test getMessage',
-              logStreamName: 'test logstreamname'
-            }
+            message: 'test getMessage',
           }
         },
         sendMessage: function(message: string): LambdaResponse {
           return {
             statusCode: 200,
-            body: {
-              message: `test sendMessage, received ${message}`,
-              logStreamName: 'test logstreamname'
-            }
+            message: `test sendMessage, received ${message}`,
           }
         }
       }
@@ -40,6 +34,7 @@ describe('runOrchestrator unit tests with mocks', () => {
       const result: LambdaResponse = await runOrchestrator(dependencies);
       expect(result).toBeDefined();
       expect(result.statusCode).toBe(200);
+      expect(result.message).toBe('runOrchestrator completed successfully');
     })
   })
 
@@ -53,10 +48,7 @@ describe('runOrchestrator unit tests with mocks', () => {
         sendMessage: function(message: string): LambdaResponse {
           return {
             statusCode: 200,
-            body: {
-              message: `test sendMessage, received ${message}`,
-              logStreamName: 'test logstreamname'
-            }
+            message: `test sendMessage, received ${message}`,
           }
         }
       }
@@ -65,6 +57,7 @@ describe('runOrchestrator unit tests with mocks', () => {
       const result: LambdaResponse = await runOrchestrator(dependencies);
       expect(result).toBeDefined();
       expect(result.statusCode).toBe(500);
+      expect(result.message).toBe('Error: mlbService failed');
     })
 
     test('dependency sendMessage throws error', async () => {
@@ -73,10 +66,7 @@ describe('runOrchestrator unit tests with mocks', () => {
         getMessage: function(): LambdaResponse {
           return {
             statusCode: 200,
-            body: {
-              message: 'test getMessage',
-              logStreamName: 'test logstreamname'
-            }
+            message: 'test getMessage',
           }
         },
         sendMessage: function(message: string): LambdaResponse {
@@ -88,6 +78,7 @@ describe('runOrchestrator unit tests with mocks', () => {
       const result: LambdaResponse = await runOrchestrator(dependencies);
       expect(result).toBeDefined();
       expect(result.statusCode).toBe(500);
+      expect(result.message).toBe('Error: slackService failed');
     })
   })
 })
