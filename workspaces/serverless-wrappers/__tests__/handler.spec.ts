@@ -1,38 +1,4 @@
-import { runBot, LambdaResponse } from '../handler';
-
-// create mock events to pass to lamdbas
-//  don't think __mocks__ is necessary for this
-//  copied from aws test event
-import { ScheduledEvent, Context, Callback } from 'aws-lambda';
-const mockScheduledEvent: ScheduledEvent = {
-  "id": "cdc73f9d-aea9-11e3-9d5a-835b769c0d9c",
-  "detail-type": "Scheduled Event",
-  "source": "aws.events",
-  "account": "{{{account-id}}}",
-  "time": "1970-01-01T00:00:00Z",
-  "region": "us-east-1",
-  "resources": [
-    "arn:aws:events:us-east-1:123456789012:rule/ExampleRule"
-  ],
-  "detail": {}
-}
-
-const mockContext: Context = {
-  callbackWaitsForEmptyEventLoop: false,
-  functionName: 'testFunction',
-  functionVersion: '1.0.0',
-  invokedFunctionArn: 'someARN',
-  memoryLimitInMB: '1024',
-  awsRequestId: 'someID',
-  logGroupName: 'logGroupName',
-  logStreamName: 'logStreamName',
-  getRemainingTimeInMillis: () => 1,
-  done: () => {},
-  fail: () => {},
-  succeed: () => {},
-}
-
-const mockCallback: Callback = () => {}
+import { runOrchestrator, LambdaResponse, IRunBotOrchestratorDependencies } from '../handler';
 
 describe('canary tests', () => {
   test('is true true?', () => {
@@ -44,20 +10,84 @@ describe('canary tests', () => {
   })
 })
 
-describe('handler.runBot unit tests with mocks', () => {
+// don't need to explicitly test arguments and return values, covered by typescript
+describe('runOrchestrator unit tests with mocks', () => {
   describe('happy path', () => {
-    test('Matches LambdaResponse type, statusCode 200', async () => {
-      const runBotResponse: LambdaResponse = await <Promise<LambdaResponse>>runBot(mockScheduledEvent, mockContext, mockCallback);
-      expect(runBotResponse).toBeDefined();
-      expect(runBotResponse.statusCode).toBe(200);
+    test('all dependencies run successfully', async () => {
+      // mock dependencies
+      const dependencies: IRunBotOrchestratorDependencies = {
+        getMessage: function(): LambdaResponse {
+          return {
+            statusCode: 200,
+            body: {
+              message: 'test getMessage',
+              logStreamName: 'test logstreamname'
+            }
+          }
+        },
+        sendMessage: function(message: string): LambdaResponse {
+          return {
+            statusCode: 200,
+            body: {
+              message: `test sendMessage, received ${message}`,
+              logStreamName: 'test logstreamname'
+            }
+          }
+        }
+      }
+
+      //run orchestrator with mocked dependencies
+      const result: LambdaResponse = await runOrchestrator(dependencies);
+      expect(result).toBeDefined();
+      expect(result.statusCode).toBe(200);
     })
   })
 
   describe('sad path', () => {
-    test('Matches LambdaResponse type, statusCode 500', async () => {
-      const runBotResponse: LambdaResponse = await <Promise<LambdaResponse>>runBot(mockScheduledEvent, mockContext, mockCallback);
-      expect(runBotResponse).toBeDefined();
-      expect(runBotResponse.statusCode).toBe(500);
+    test('dependency getMessage throws error', async () => {
+      // mock dependencies
+      const dependencies: IRunBotOrchestratorDependencies = {
+        getMessage: function(): LambdaResponse {
+          throw new Error('mlbService failed');
+        },
+        sendMessage: function(message: string): LambdaResponse {
+          return {
+            statusCode: 200,
+            body: {
+              message: `test sendMessage, received ${message}`,
+              logStreamName: 'test logstreamname'
+            }
+          }
+        }
+      }
+
+      //run orchestrator with mocked dependencies
+      const result: LambdaResponse = await runOrchestrator(dependencies);
+      expect(result).toBeDefined();
+      expect(result.statusCode).toBe(500);
+    })
+
+    test('dependency sendMessage throws error', async () => {
+      // mock dependencies
+      const dependencies: IRunBotOrchestratorDependencies = {
+        getMessage: function(): LambdaResponse {
+          return {
+            statusCode: 200,
+            body: {
+              message: 'test getMessage',
+              logStreamName: 'test logstreamname'
+            }
+          }
+        },
+        sendMessage: function(message: string): LambdaResponse {
+          throw new Error('slackService failed');
+        }
+      }
+
+      //run orchestrator with mocked dependencies
+      const result: LambdaResponse = await runOrchestrator(dependencies);
+      expect(result).toBeDefined();
+      expect(result.statusCode).toBe(500);
     })
   })
 })

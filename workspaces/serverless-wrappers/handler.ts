@@ -21,7 +21,7 @@ export type LambdaResponse = {
   }
 }
 
-interface IRunBotOrchestratorDependencies {
+export interface IRunBotOrchestratorDependencies {
   getMessage(): LambdaResponse,
   sendMessage(message: string): LambdaResponse,
 }
@@ -54,32 +54,37 @@ function initDependencies(): Promise<IRunBotOrchestratorDependencies> {
 }
 
 const dependenciesReady = initDependencies();
-// in aws this lambda is named bball-slackbot-upgraded-[dev/test/prod]-runBot
-// leaving as generic Handler type as ScheduledHandler is defined as Handler<ScheduledEvent, void>
-//   if confirmed never using context, change
-export const runBot: Handler<ScheduledEvent, LambdaResponse> = async (_event: ScheduledEvent, _context: Context): Promise<LambdaResponse> => {
-  const { getMessage, sendMessage } = await dependenciesReady;
 
+export async function runOrchestrator(dependencies: IRunBotOrchestratorDependencies): Promise<LambdaResponse> {
+  const { getMessage, sendMessage } = dependencies;
+  
   try {
-    const data = await getMessage()
-    console.log(`data: `, data);
+    const slackMessage = await getMessage()
   } catch (error) {
     return {
       statusCode: 500,
       body: {
-        message: `error in runBot: ${error}`,
-        logStreamName: _context.logStreamName
+        message: `error: ${error}`,
+        logStreamName: 'dev logstreamname'
       }
-    };
+    }
   }
-
+  
   return {
     statusCode: 200,
     body: {
-      message: 'runBot finished successfully',
-      logStreamName: _context.logStreamName
+      message: 'runOrchestrator completed successfully',
+      logStreamName: 'dev logstreamname'
     }
-  };
+  }
+}
+
+// in aws this lambda is named bball-slackbot-upgraded-[dev/test/prod]-runBot
+// leaving as generic Handler type as ScheduledHandler is defined as Handler<ScheduledEvent, void>
+//   if confirmed never using context, change
+export const runBot: Handler<ScheduledEvent, LambdaResponse> = async (_event: ScheduledEvent, _context: Context): Promise<LambdaResponse> => {
+  const dependencies = await dependenciesReady;
+  return await runOrchestrator(dependencies);
 }
 
 // in aws this lambda is named bball-slackbot-upgraded-[dev/test/prod]-checkMLBGamesLambda
