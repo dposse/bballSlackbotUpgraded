@@ -43,7 +43,14 @@ function initDependencies(): Promise<IRunBotOrchestratorDependencies> {
 
   //add slack lambda when it is complete
   const sendMessage = (message: string) => { 
-    return <LambdaResponse>{} 
+    const slackLambdaParams: InvokeLambdaParams = {
+      FunctionName: 'bball-slackbot-upgraded-dev-sendSlackMessageLambda',
+      InvocationType: 'RequestResponse',
+      LogType: 'Tail',
+      Payload: JSON.stringify({ message: message })
+    }
+    
+    return lambda.invoke(slackLambdaParams).promise();
   }
 
   return Promise.resolve({
@@ -58,8 +65,13 @@ export async function runOrchestrator(dependencies: IRunBotOrchestratorDependenc
   const { getMessage, sendMessage } = dependencies;
   
   try {
-    const getMessageResponse: LambdaResponse = await getMessage();
-    const messageToSend: string = getMessageResponse.message;
+    const getMessageResponse = await getMessage();
+    console.log(`getMessageResponse: `, getMessageResponse);
+
+    //below shows typescript error - not sure how best to fix this
+    const payload = getMessageResponse.Payload;
+    console.log(`getMessageResponse.Payload: `, payload);
+    const messageToSend: string = JSON.parse(getMessageResponse.Payload).message;
     await sendMessage(messageToSend);
   } catch (error) {
     return {
@@ -86,5 +98,12 @@ export const runBot: Handler<ScheduledEvent, LambdaResponse> = async (_event: Sc
 export const checkMLBGamesLambda: Handler = async (event, _context: Context) => {
   console.log(`in checkMLBGamesLambda`);
   console.log(`Event: \n${JSON.stringify(event, null, 2)}`);
-  return _context.logStreamName;
+  return { message: 'this shows in response.payload' };
+}
+
+// in aws this lambda is named bball-slackbot-upgraded-[dev/test/prod]-sendSlackMessageLambda
+export const sendSlackMessageLambda: Handler = async (event, _context: Context) => {
+  console.log(`in sendSlackMessageLambda`);
+  console.log(`Event: \n${JSON.stringify(event, null, 2)}`);
+  return 'test run';
 }

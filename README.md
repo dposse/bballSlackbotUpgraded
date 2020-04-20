@@ -6,6 +6,9 @@ This project started as a node script we could run locally, but we wanted to lea
 
 Does a project of this scale need lambdas? No. No it does not.
 
+Original project here: https://github.com/snpdolan/bball_slackbot
+Thanks to [snpdolan](https://github.com/snpdolan)
+
 ---
 
 ### Installation

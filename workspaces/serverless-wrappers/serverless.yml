@@ -31,6 +31,8 @@ functions:
     role: cronRole
   checkMLBGamesLambda:
     handler: handler.checkMLBGamesLambda
+  sendSlackMessageLambda:
+    handler: handler.sendSlackMessageLambda
 
 resources:
   Resources:
