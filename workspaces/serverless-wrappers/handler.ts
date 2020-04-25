@@ -69,9 +69,9 @@ export async function runOrchestrator(dependencies: IRunBotOrchestratorDependenc
     console.log(`getMessageResponse: `, getMessageResponse);
 
     //below shows typescript error - not sure how best to fix this
-    const payload = getMessageResponse.Payload;
+    const payload = JSON.parse(getMessageResponse.Payload);
     console.log(`getMessageResponse.Payload: `, payload);
-    const messageToSend: string = JSON.parse(getMessageResponse.Payload).message;
+    const messageToSend: string = payload.message;
     await sendMessage(messageToSend);
   } catch (error) {
     return {

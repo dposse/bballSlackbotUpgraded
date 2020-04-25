@@ -33,6 +33,7 @@ functions:
     handler: handler.checkMLBGamesLambda
   sendSlackMessageLambda:
     handler: handler.sendSlackMessageLambda
+    role: slackRole
 
 resources:
   Resources:
@@ -40,6 +41,30 @@ resources:
       Type: AWS::IAM::Role
       Properties:
         RoleName: cronRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: cronPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - lambda:InvokeFunction
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: "arn:aws:lambda:us-east-1:705412871641:function:bball-slackbot-upgraded-dev-*"
+    slackRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: slackRole
         AssumeRolePolicyDocument:
           Version: '2012-10-17'
           Statement:

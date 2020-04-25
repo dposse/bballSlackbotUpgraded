@@ -93,3 +93,5 @@ to
     })],
 
 I think it would have been easier to install jest in root or `workspaces/`, but I wanted to have each workspace have its own dependencies in case a service wasn't in javascript/typescript. I was having issues getting jest to work correctly with typescript, and ended up using [this repo](https://github.com/tgensol/serverless-typescript-jest) as a template.
+
+After creating the three lambdas, I found out about AWS step functions. That might be a cleaner solution, although the current setup with an orchestrator lambda might be more portable if you wanted to change cloud providers.
