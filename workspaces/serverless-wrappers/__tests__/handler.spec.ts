@@ -1,4 +1,4 @@
-// import { runBot } from '../handler';
+import { runOrchestrator, LambdaResponse, IRunBotOrchestratorDependencies } from '../handler';
 
 describe('canary tests', () => {
   test('is true true?', () => {
@@ -10,16 +10,75 @@ describe('canary tests', () => {
   })
 })
 
-describe('handler.runBot tests', () => {
+// don't need to explicitly test arguments and return values, covered by typescript
+describe('runOrchestrator unit tests with mocks', () => {
   describe('happy path', () => {
-    test('returns a proper serialized json, statusCode 200', () => {
-      // const runBotResponse = JSON.parse(runBot());
-      // expect(runBotResponse).toBeDefined();
-      // expect(runBotResponse.statusCode).toBe(200);
+    test('all dependencies run successfully', async () => {
+      // mock dependencies
+      const dependencies: IRunBotOrchestratorDependencies = {
+        getMessage: function(): LambdaResponse {
+          return {
+            statusCode: 200,
+            message: 'test getMessage',
+          }
+        },
+        sendMessage: function(message: string): LambdaResponse {
+          return {
+            statusCode: 200,
+            message: `test sendMessage, received ${message}`,
+          }
+        }
+      }
+
+      //run orchestrator with mocked dependencies
+      const result: LambdaResponse = await runOrchestrator(dependencies);
+      expect(result).toBeDefined();
+      expect(result.statusCode).toBe(200);
+      expect(result.message).toBe('runOrchestrator completed successfully');
     })
   })
 
   describe('sad path', () => {
+    test('dependency getMessage throws error', async () => {
+      // mock dependencies
+      const dependencies: IRunBotOrchestratorDependencies = {
+        getMessage: function(): LambdaResponse {
+          throw new Error('mlbService failed');
+        },
+        sendMessage: function(message: string): LambdaResponse {
+          return {
+            statusCode: 200,
+            message: `test sendMessage, received ${message}`,
+          }
+        }
+      }
 
+      //run orchestrator with mocked dependencies
+      const result: LambdaResponse = await runOrchestrator(dependencies);
+      expect(result).toBeDefined();
+      expect(result.statusCode).toBe(500);
+      expect(result.message).toBe('Error: mlbService failed');
+    })
+
+    test('dependency sendMessage throws error', async () => {
+      // mock dependencies
+      const dependencies: IRunBotOrchestratorDependencies = {
+        getMessage: function(): LambdaResponse {
+          return {
+            statusCode: 200,
+            message: 'test getMessage',
+          }
+        },
+        sendMessage: function(message: string): LambdaResponse {
+          throw new Error('slackService failed');
+        }
+      }
+
+      //run orchestrator with mocked dependencies
+      const result: LambdaResponse = await runOrchestrator(dependencies);
+      expect(result).toBeDefined();
+      expect(result.statusCode).toBe(500);
+      expect(result.message).toBe('Error: slackService failed');
+    })
   })
 })
