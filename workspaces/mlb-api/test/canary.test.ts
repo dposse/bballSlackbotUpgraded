@@ -4,5 +4,5 @@ describe('canary tests - on initial install change these so they break', () => {
   });
   test('true is not false', () => {
     expect(true).not.toBe(false);
-  })
+  });
 });
