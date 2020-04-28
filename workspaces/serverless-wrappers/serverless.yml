@@ -19,7 +19,7 @@ package:
 
 provider:
   name: aws
-  profile: serverless-admin
+  profile: default
   runtime: nodejs12.x
 
 functions:

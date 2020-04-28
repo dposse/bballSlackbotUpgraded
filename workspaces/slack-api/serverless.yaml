@@ -1,0 +1,12 @@
+service: aws-node-slackbot-cron
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+functions:
+  postToSlack:
+    handler: handler.postToSlack
+    events:
+      # Invoke Lambda function at 9:01AM from Mon-Fri
+      - schedule: cron(1 8 ? * MON-FRI *)

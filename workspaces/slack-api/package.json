@@ -1,8 +1,17 @@
 {
   "name": "slack-api",
   "version": "1.0.0",
+  "scripts": {
+    "test": "jest"
+  },
   "dependencies": {
+    "@slack/web-api": "~5.8",
+    "aws-sdk": "~2",
     "cross-env": "7.0.2",
     "serverless-wrappers": "1.0.0"
+  },
+  "devDependencies": {
+    "jest": "^25.4.0",
+    "serverless": "^1.68.0"
   }
 }
