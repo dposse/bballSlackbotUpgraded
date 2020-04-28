@@ -41,7 +41,13 @@ I also had to add the following in `workspaces/serverless-wrappers/package.json`
 
 ### Usage
 
-To run tests, run (in the appropriate workspace)
+#### workspaces/mlb-api
+
+To add/change any code, the typescript compiler can be started in watch mode with `yarn start`, and tests run with `yarn test`. This was setup with TSdx.
+
+#### workspaces/serverless-wrappers
+
+To run tests, run
 
     tsc --watch
     yarn test
@@ -95,3 +101,5 @@ to
 I think it would have been easier to install jest in root or `workspaces/`, but I wanted to have each workspace have its own dependencies in case a service wasn't in javascript/typescript. I was having issues getting jest to work correctly with typescript, and ended up using [this repo](https://github.com/tgensol/serverless-typescript-jest) as a template.
 
 After creating the three lambdas, I found out about AWS step functions. That might be a cleaner solution, although the current setup with an orchestrator lambda might be more portable if you wanted to change cloud providers.
+
+For the mlb-api workspace, I wanted to test [TSdx](https://github.com/jaredpalmer/tsdx) as it was recommended in the typescript handbook for developing libraries. So far I have not noticed any downsides, but I do not have extensive experience with typescript yet. The jest tests take about 30 seconds to run, but I am not sure if that is an issue with TSdx, or my local machine/wsl setup.
