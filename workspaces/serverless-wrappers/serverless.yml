@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 service:
   name: bball-slackbot-upgraded
 # app and org for use with dashboard.serverless.com
@@ -54,4 +55,92 @@ resources:
                 - Effect: Allow
                   Action:
                     - lambda:InvokeFunction
+=======
+service:
+  name: bball-slackbot-upgraded
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+    packager: 'yarn'
+
+# Add the serverless-webpack plugin
+plugins:
+  - serverless-webpack
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  profile: serverless-admin
+  runtime: nodejs12.x
+
+functions:
+  runBot:
+    handler: handler.runBot
+    events:
+      - schedule: cron(0 13 * * ? *)
+      # - schedule: rate(1 minute)
+    role: cronRole
+  checkMLBGamesLambda:
+    handler: handler.checkMLBGamesLambda
+  sendSlackMessageLambda:
+    handler: handler.sendSlackMessageLambda
+    role: slackRole
+
+resources:
+  Resources:
+    cronRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: cronRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: cronPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - lambda:InvokeFunction
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: "arn:aws:lambda:us-east-1:705412871641:function:bball-slackbot-upgraded-dev-*"
+    slackRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: slackRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: cronPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - lambda:InvokeFunction
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+>>>>>>> master
                   Resource: "*"

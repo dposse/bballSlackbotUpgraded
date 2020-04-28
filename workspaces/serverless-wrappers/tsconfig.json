@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "compilerOptions": {
     "lib": ["es2017"],
@@ -18,3 +19,35 @@
     ".vscode/**/*"
   ]
 }
+=======
+{
+  "compilerOptions": {
+    "lib": ["ES2018"],
+    "module": "commonjs",
+    "removeComments": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "target": "ES2018",
+    "outDir": "lib",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "preserveConstEnums": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "forceConsistentCasingInFileNames": true,
+    "alwaysStrict": true
+  },
+  "include": ["./**/*.ts","./*.ts"],
+  "exclude": [
+    "node_modules/**/*",
+    ".serverless/**/*",
+    ".webpack/**/*",
+    "_warmup/**/*",
+    ".vscode/**/*",
+    "../node_modules/**/*"
+  ]
+}
+>>>>>>> master
