@@ -1,6 +1,17 @@
+import { IMLBApi } from 'types';
+
+//
+
 // internal curry function for dependency injection
-export function _getAllGamesOnDate(date: Date) {
-  return [date];
+export function _getAllGamesOnDate(api: IMLBApi, date: Date): Promise<any[]> {
+  return new Promise((resolve, _reject) => {
+    try {
+      const results = api.get(date);
+      resolve(results);
+    } catch (error) {
+      throw new Error(error);
+    }
+  });
 }
 
 // expose a function with dependency already injected
