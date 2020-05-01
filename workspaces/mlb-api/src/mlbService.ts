@@ -22,6 +22,18 @@ class MLBApi implements IMLBApi {
   }
 }
 
+// returned format is 'year_YYYY/month_MM/day_DD/' change if using another api
+export function convertDateToString(date: Date): string {
+  const month: number = date.getMonth() + 1;
+  const day: number = date.getDate();
+
+  const yearString: string = `${date.getFullYear()}`;
+  const monthString: string = month < 10 ? `0${month}` : `${month}`;
+  const dayString: string = day < 10 ? `0${day}` : `${day}`;
+
+  return `year_${yearString}/month_${monthString}/day_${dayString}/`;
+}
+
 // internal curried function for dependency injection
 export const _getAllGamesOnDate = (api: IMLBApi) => (
   date: Date

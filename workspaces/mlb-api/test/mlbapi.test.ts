@@ -1,4 +1,8 @@
-import { getAllGamesOnDate, _getAllGamesOnDate } from '../src/index';
+import {
+  getAllGamesOnDate,
+  _getAllGamesOnDate,
+  convertDateToString,
+} from '../src/index';
 import { IMLBApi } from '../src/types/index';
 import mlbGamesTestData from '../src/mlbGamesTestData';
 
@@ -88,6 +92,51 @@ describe('mlbapi tests', () => {
     });
   });
 
+  describe.only('convertDateToString() unit tests', () => {
+    test('exists', () => {
+      // arrange
+      // act
+      // assert
+      expect(convertDateToString).toBeDefined();
+    });
+
+    test('converts date object to proper string, leading zero in month', () => {
+      // arrange
+      const testDate: Date = new Date('July 23, 2011');
+      const expectedPath: string = 'year_2011/month_07/day_23/';
+
+      // act
+      const resultPath: string = convertDateToString(testDate);
+
+      // assert
+      expect(resultPath).toBe(expectedPath);
+    });
+
+    test('converts date object to proper string, leading zero in day', () => {
+      // arrange
+      const testDate: Date = new Date('December 01, 2011');
+      const expectedPath: string = 'year_2011/month_12/day_01/';
+
+      // act
+      const resultPath: string = convertDateToString(testDate);
+
+      // assert
+      expect(resultPath).toBe(expectedPath);
+    });
+
+    test('converts date object to proper string, leading zero in day and month', () => {
+      // arrange
+      const testDate: Date = new Date('January 01, 2011');
+      const expectedPath: string = 'year_2011/month_01/day_01/';
+
+      // act
+      const resultPath: string = convertDateToString(testDate);
+
+      // assert
+      expect(resultPath).toBe(expectedPath);
+    });
+  });
+
   describe('getAllGamesOnDate() integration tests', () => {
     test('exists', () => {
       expect(getAllGamesOnDate).toBeDefined();
@@ -95,11 +144,11 @@ describe('mlbapi tests', () => {
 
     test('gets games from 07/23/2011 (date used in mlbGames npm package readme)', async () => {
       // arrange
+      // testDate is from mlbGames npm package readme
+      const testDate = new Date('July 23, 2011');
       const expectedResult = mlbGamesTestData;
 
       // act
-      // testDate is from mlbGames npm package readme
-      const testDate = new Date('July 23, 2011');
       const result = await getAllGamesOnDate(testDate);
 
       // assert
@@ -109,11 +158,11 @@ describe('mlbapi tests', () => {
 
     test('gets games from 05/13/2019 (date used because it only has 7 games)', async () => {
       // arrange
+      // testDate is a random date that does not have 15 games played
+      const testDate = new Date('May 13, 2019');
       const notExpectedResult = mlbGamesTestData;
 
       // act
-      // testDate is a random date that does not have 15 games played
-      const testDate = new Date('May 13, 2019');
       const result = await getAllGamesOnDate(testDate);
 
       // assert
