@@ -1,0 +1,5 @@
+/////////////////////////////////////////////////////////////
+// Types and Interfaces
+export interface IMLBApi {
+  get(date: Date): Promise<any[]>;
+}
