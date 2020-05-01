@@ -45,6 +45,8 @@ I also had to add the following in `workspaces/serverless-wrappers/package.json`
 
 To add/change any code, the typescript compiler can be started in watch mode with `yarn start`, and tests run with `yarn test`. This was setup with TSdx.
 
+This is intended to be a library, but there is a `main()` in `/src/mlbService.ts` that can be run.
+
 #### workspaces/serverless-wrappers
 
 To run tests, run
@@ -103,3 +105,11 @@ I think it would have been easier to install jest in root or `workspaces/`, but 
 After creating the three lambdas, I found out about AWS step functions. That might be a cleaner solution, although the current setup with an orchestrator lambda might be more portable if you wanted to change cloud providers.
 
 For the mlb-api workspace, I wanted to test [TSdx](https://github.com/jaredpalmer/tsdx) as it was recommended in the typescript handbook for developing libraries. So far I have not noticed any downsides, but I do not have extensive experience with typescript yet. The jest tests take about 30 seconds to run, but I am not sure if that is an issue with TSdx, or my local machine/wsl setup.
+
+It took me a bit to wrap my head around dependency injection while also not exposing the dependency to the end user. Under the hood we are using the npm package `mlbgames` due to it having the most straightforward way of finding if a team won on a given day. Initially I created one function taking the api as an argument (yay dependency injection) but of course if this is the function exposed to the consumer, they would have to import mlbgames and send it as an argument. Currying the function ended up being what I was looking for; the original curry function:
+
+    _getAllGamesOnDate = api => date => {}
+
+could be easily tested with a mock api thanks to dependency injection, and the end user would get the resulting partial function:
+
+    export const getAllGamesOnDate = _getAllGamesOnDate(mlbApi);

@@ -4,10 +4,10 @@ import { IMLBApi } from 'types';
 class MLBApi implements IMLBApi {
   Mlbgames = require('mlbgames');
 
-  get(_date: Date): Promise<any[]> {
+  get(date: Date): Promise<any[]> {
     return new Promise((resolve, _reject) => {
       const options = {
-        path: 'year_2011/month_07/day_23/',
+        path: convertDateToString(date),
       };
 
       const mlbgames = new this.Mlbgames(options);

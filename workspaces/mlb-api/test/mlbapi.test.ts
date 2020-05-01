@@ -92,7 +92,7 @@ describe('mlbapi tests', () => {
     });
   });
 
-  describe.only('convertDateToString() unit tests', () => {
+  describe('convertDateToString() unit tests', () => {
     test('exists', () => {
       // arrange
       // act
@@ -137,7 +137,7 @@ describe('mlbapi tests', () => {
     });
   });
 
-  describe('getAllGamesOnDate() integration tests', () => {
+  describe.only('getAllGamesOnDate() integration tests', () => {
     test('exists', () => {
       expect(getAllGamesOnDate).toBeDefined();
     });
