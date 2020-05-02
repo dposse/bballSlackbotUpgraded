@@ -137,7 +137,7 @@ describe('mlbapi tests', () => {
     });
   });
 
-  describe.only('getAllGamesOnDate() integration tests', () => {
+  describe('getAllGamesOnDate() integration tests', () => {
     test('exists', () => {
       expect(getAllGamesOnDate).toBeDefined();
     });
