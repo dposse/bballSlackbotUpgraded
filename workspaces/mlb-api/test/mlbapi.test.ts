@@ -1576,7 +1576,9 @@ describe('mlbapi tests', () => {
         } catch (error) {
           // assert
           expect(error).toBeDefined();
-          expect(error).toEqual(new Error('Invalid team code'));
+          expect(error).toEqual(
+            new Error(`Invalid team code 'this can be any INVALID code'`)
+          );
         }
       });
     });
@@ -1585,6 +1587,55 @@ describe('mlbapi tests', () => {
   describe('getGamesPlayed() integration tests', () => {
     test('exists', () => {
       expect(getGamesPlayed).toBeDefined();
+    });
+
+    //use random dates to test, make sure double header is tested
+    test('min vs bal 04/20/2019, double header, teamCode = min', async () => {
+      // arrange
+      const teamCodeMinnesota: string = 'min';
+      const date: Date = new Date('April 20, 2019');
+
+      // act
+      const results = await getGamesPlayed(teamCodeMinnesota, date);
+
+      // assert
+      expect(results).toHaveLength(2);
+    });
+
+    test('min vs bal 04/20/2019, double header, teamCode = bal', async () => {
+      // arrange
+      const teamCodeBaltimore: string = 'bal';
+      const date: Date = new Date('April 20, 2019');
+
+      // act
+      const results = await getGamesPlayed(teamCodeBaltimore, date);
+
+      // assert
+      expect(results).toHaveLength(2);
+    });
+
+    test('a date where no games were played', async () => {
+      // arrange
+      const teamCode: string = 'ana'; //can be anything, but has to be valid for test
+      const outOfSeasonDate: Date = new Date('March 28, 2018');
+
+      // act
+      const results = await getGamesPlayed(teamCode, outOfSeasonDate);
+
+      // assert
+      expect(results).toStrictEqual([]);
+    });
+
+    test('a date where the yankees played one game', async () => {
+      // arrange
+      const teamCodeYankees: string = 'nya';
+      const date: Date = new Date('April 02, 2017');
+
+      // act
+      const results = await getGamesPlayed(teamCodeYankees, date);
+
+      // assert
+      expect(results).toHaveLength(1);
     });
   });
 });

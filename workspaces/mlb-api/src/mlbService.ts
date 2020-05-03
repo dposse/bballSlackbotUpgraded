@@ -17,6 +17,10 @@ class MLBApi implements IMLBApi {
           throw new Error(err);
         }
 
+        if (games === undefined) {
+          resolve([]);
+        }
+
         resolve(games);
       });
     });
@@ -56,8 +60,8 @@ export const _getGamesPlayed = (api: IMLBApi) => (
   return new Promise((resolve, _reject) => {
     //validate input
     // teamCodes can only be the keys in mlbTeamsJSON
-    if (Object.keys(mlbTeamsJSON).indexOf(teamCode) === -1) {
-      throw new Error('Invalid team code');
+    if (!mlbTeamsJSON.hasOwnProperty(teamCode)) {
+      throw new Error(`Invalid team code '${teamCode}'`);
     }
 
     try {
@@ -87,10 +91,12 @@ const mlbApi = new MLBApi();
 export const getAllGamesOnDate = _getAllGamesOnDate(mlbApi);
 export const getGamesPlayed = _getGamesPlayed(mlbApi);
 
+// main function for testing
+// comment out to run tests
 // async function main() {
-//   // const results = await _getAllGamesOnDate(mlbApi)(new Date());
-//   // console.log(results.length);
-//   console.log(_getGamesPlayed(mlbApi)('hi', new Date()));
+//   const results = await _getAllGamesOnDate(mlbApi)(new Date('March 28, 2018'));
+//   console.log(results);
+//   // console.log(_getGamesPlayed(mlbApi)('hi', new Date()));
 // }
 
 // main();
