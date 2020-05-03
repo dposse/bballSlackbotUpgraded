@@ -18,6 +18,7 @@
       "*": ["src/*", "node_modules/*"]
     },
     "jsx": "react",
+    "resolveJsonModule": true,
     "esModuleInterop": true
   }
 }
