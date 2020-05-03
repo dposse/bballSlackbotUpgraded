@@ -113,3 +113,25 @@ It took me a bit to wrap my head around dependency injection while also not expo
 could be easily tested with a mock api thanks to dependency injection, and the end user would get the resulting partial function:
 
     export const getAllGamesOnDate = _getAllGamesOnDate(mlbApi);
+
+#### Jest Issue
+
+I ran into an issue with Jest that I'm unsure of how to google. It may be a bug, or I am misunderstanding how Jest handles some async tests.
+
+In the 'getGamesPlayed() integration tests' describe block, there are two tests that get the games on 04/20/2019, one for Minnesota ('min') and one for Baltimore ('bal'). On this day these teams played a double header, so I wanted to make sure the code correctly returned two game objects for each team code i.e., `getGamesPlayed('min', new Date('April 20, 2019'))` and `getGamesPlayed('min', new Date('April 20, 2019'))`.
+
+When you run these tests individually, with `test.only` on either or both, or only that describe block with `describe.only`, the tests run successfully. But if you run all tests, one or both will fail.
+
+There is some kind of test collision happening here. They always fail at the team code validation:
+
+    if (!mlbTeamsJSON.hasOwnProperty(teamCode)) {
+      throw new Error(`Invalid team code '${teamCode}'`);
+    }
+
+Now if it were getting the correct function call, the error would log as `Invalid team code 'min'` or `Invalid team code 'bal'` (and furthermore it shouldn't actually throw the error...) But what it actually shows is:
+
+    Invalid team code 'this can be any code'
+
+This is from another test inside \_getGamesPlayed() unit tests. Interestingly enough, this test passes while it shouldn't. This test was written before the function validated teamCode, with the idea that it was just testing that teamCode would be a string. After adding the above validation, this test should no longer pass, since `'this can be any code'` is not a valid team code. The test still passes, but the exception gets thrown in the other integration test!
+
+Fixing the \_getGamesPlayed() unit test to pass a valid team code fixes all tests.

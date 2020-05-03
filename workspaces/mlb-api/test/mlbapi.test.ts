@@ -190,7 +190,7 @@ describe('mlbapi tests', () => {
         },
       };
       const today: Date = new Date();
-      const teamCode: string = 'this can be any code';
+      const teamCode: string = 'nya'; //this can be any valid team code
 
       // act
       const results = _getGamesPlayed(api)(teamCode, today);
