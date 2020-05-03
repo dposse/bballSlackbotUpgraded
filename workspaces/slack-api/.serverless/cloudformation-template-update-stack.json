@@ -144,7 +144,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aws-node-slackbot-cron/dev/1587992803842-2020-04-27T13:06:43.842Z/aws-node-slackbot-cron.zip"
+          "S3Key": "serverless/aws-node-slackbot-cron/dev/1588460525905-2020-05-02T23:02:05.905Z/aws-node-slackbot-cron.zip"
         },
         "FunctionName": "aws-node-slackbot-cron-dev-postToSlack",
         "Handler": "handler.postToSlack",
@@ -163,14 +163,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostToSlackLambdaVersion7ipVv3HzOPAp066qr5nSn5cWYslta1n27qzKYInmlIM": {
+    "PostToSlackLambdaVersion7V1h6Qsr7rbzRRxDSl5eRg2Z3wFRnVc2SNfE2JR0g": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostToSlackLambdaFunction"
         },
-        "CodeSha256": "GKnEVIlOyxxmvMK2qgQnYSDN1vGlkqJDXiCCQp0nFhI="
+        "CodeSha256": "jHFTql/lIsOxf3FQfQbqVuIfXzMd2SJ5V5LnPye2cII="
       }
     },
     "PostToSlackEventsRuleSchedule1": {
@@ -220,7 +220,7 @@
     "PostToSlackLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostToSlackLambdaVersion7ipVv3HzOPAp066qr5nSn5cWYslta1n27qzKYInmlIM"
+        "Ref": "PostToSlackLambdaVersion7V1h6Qsr7rbzRRxDSl5eRg2Z3wFRnVc2SNfE2JR0g"
       }
     }
   }

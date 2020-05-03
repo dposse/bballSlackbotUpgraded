@@ -5,23 +5,26 @@ let result = 'base message';
 
 exports.postToSlack = async (event) => {
 
-  const body = JSON.parse(event.body);
-  const {
-    // pass token within POST request body
-    slackToken,
-    messageText,
-    // Given some known conversation ID (representing a public channel, private channel, DM or group DM)
-    conversationId
-  } = body;
+  let slackToken = null;
+  let messageText = "Let's get donuts!?";
+  let conversationId = "secret-channel";
+  const eventBody = typeof event.body === 'string' ? JSON.parse(event.body) : event.body
+
+  if (eventBody && eventBody.slackToken) {
+    slackToken = eventBody.slackToken;
+    messageText = eventBody.messageText;
+    conversationId = eventBody.conversationId;
+  }
+
   try {
     // Or read a token from the environment variables
-    const token = slackToken || process.env.SLACK_TOKEN;
+    const token = slackToken ? slackToken : process.env.SLACK_TOKEN;
     // Find more arguments and details of the response: https://api.slack.com/methods/chat.postMessage
     // Post a message to the channel, and await the result.
     result = await web.chat.postMessage({
       token,
-      text: messageText || "Let's get donuts!?",
-      channel: conversationId || "secret-channel",
+      text: messageText,
+      channel: conversationId,
     });
   } catch (error) {
 
