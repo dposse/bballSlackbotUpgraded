@@ -13,13 +13,18 @@ export const _getResultMessage = (
     try {
       // get games played by team on date
       getGamesPlayed(teamCode, date).then(resolvedResults => {
+        // remove postponed games
+        const nonPostponedGames = resolvedResults.filter(
+          game => game.status.status !== 'Postponed'
+        );
         // just return empty string if no games played on given date
-        if (resolvedResults.length === 0) {
+        if (nonPostponedGames.length === 0) {
           resolve('');
+          return;
         }
 
         // check if they won or not - needs to handle multiple games
-        const gameResults = resolvedResults.map(gameObject => {
+        const gameResults = nonPostponedGames.map(gameObject => {
           // make sure gameObject still the same shape
           // could be done in typescript, didn't think it was worth it
           if (!gameObject.linescore.r) {
@@ -113,17 +118,25 @@ export function createMessage(gameResults: GameResult[]): string {
 }
 
 //wrap in promise, if result messasge is '' return null, else return result message
-export function getYesterdayResultMessage(_teamCode: TeamKey): string | null {
-  let yesterday: Date = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  return `${yesterday}`;
+export function getYesterdayResultMessage(
+  teamCode: TeamKey
+): Promise<string | null> {
+  return new Promise((resolve, _reject) => {
+    let yesterday: Date = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    _getResultMessage(yesterday, teamCode).then(resultMessage => {
+      if (resultMessage === '') {
+        resolve(null);
+      } else {
+        resolve(resultMessage);
+      }
+    });
+  });
 }
 
 // async function main() {
-//   console.log(getYesterdayResultMessage('ana'));
-//   const testDate = new Date('April 20, 2019');
-//   const team = 'atl';
-//   console.log(await _getResultMessage(testDate, team));
+//   console.log(await getYesterdayResultMessage('ana'));
 // }
 
 // main();

@@ -45,7 +45,7 @@ I also had to add the following in `workspaces/serverless-wrappers/package.json`
 
 To add/change any code, the typescript compiler can be started in watch mode with `yarn start`, and tests run with `yarn test`. This was setup with TSdx.
 
-This is intended to be a library, but there is a `main()` in `/src/mlbService.ts` that can be run.
+This is intended to be a library, but there is a `main()` in `/src/mlbService.ts` and `/src/mlbController.ts` that can be uncommented and run.
 
 #### workspaces/serverless-wrappers
 

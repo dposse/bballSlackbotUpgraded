@@ -91,12 +91,10 @@ const mlbApi = new MLBApi();
 export const getAllGamesOnDate = _getAllGamesOnDate(mlbApi);
 export const getGamesPlayed = _getGamesPlayed(mlbApi);
 
-// main function for testing
-// comment out to run tests
 // async function main() {
-//   const results = await _getAllGamesOnDate(mlbApi)(new Date('March 28, 2018'));
-//   console.log(results);
-//   // console.log(_getGamesPlayed(mlbApi)('hi', new Date()));
+//   // const results = await _getAllGamesOnDate(mlbApi)(new Date('May 07, 2020'));
+//   // console.log(results);
+//   console.log(await _getGamesPlayed(mlbApi)('ana', new Date('May 07, 2020')));
 // }
 
 // main();
