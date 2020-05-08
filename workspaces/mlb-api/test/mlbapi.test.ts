@@ -27,7 +27,7 @@ describe.skip('dependencies tests', () => {
   });
 });
 
-describe('mlbapi tests', () => {
+describe.skip('mlbapi tests', () => {
   describe('_getAllGamesOnDate() unit tests', () => {
     test('exists', () => {
       expect(_getAllGamesOnDate).toBeDefined();
