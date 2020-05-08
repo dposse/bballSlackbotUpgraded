@@ -114,6 +114,8 @@ could be easily tested with a mock api thanks to dependency injection, and the e
 
     export const getAllGamesOnDate = _getAllGamesOnDate(mlbApi);
 
+I have included 'draw' in gameResult status, but I did not include logic to check for double header draws, as my limited research in baseball shows that ties are incredibly rare. Also the message strings are only decided by wins/losses, but I did include scoreDifference so there could be different messages based on how much a team won/lost by.
+
 #### Jest Issue
 
 I ran into an issue with Jest that I'm unsure of how to google. It may be a bug, or I am misunderstanding how Jest handles some async tests.

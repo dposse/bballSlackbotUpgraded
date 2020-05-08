@@ -1,4 +1,9 @@
 {
   "givenTeamWon": "Damn, TEAMNAME won... I guess even the worst teams can win sometimes.",
-  "givenTeamLost": "Ha! The TEAMNAME couldn't touch the OTHERTEAM."
+  "givenTeamLost": "Ha! The TEAMNAME couldn't touch the OTHERTEAM.",
+  "givenTeamDraw": "Try as they might, a draw is the best the TEAMNAME can do.",
+  "givenTeamDoubleWin": "When you thought the universe couldn't get any darker, satan conspired with the TEAMNAME  to get them two victories over the OTHERTEAM.",
+  "givenTeamWonAndLost": "The TEAMNAME did win... but we should focus on how the OTHERTEAM trounced them instead.",
+  "givenTeamDoubleLoss": "Today we celebrate the TEAMNAME for showing us how to lose twice!",
+  "givenTeamDoubleDraw": "The forces of order and chaos are at a stalemate. Somehow the TEAMNAME neither won nor lost."
 }

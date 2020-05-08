@@ -13,6 +13,11 @@ export const _getResultMessage = (
     try {
       // get games played by team on date
       getGamesPlayed(teamCode, date).then(resolvedResults => {
+        // just return empty string if no games played on given date
+        if (resolvedResults.length === 0) {
+          resolve('');
+        }
+
         // check if they won or not - needs to handle multiple games
         const gameResults = resolvedResults.map(gameObject => {
           // make sure gameObject still the same shape
@@ -47,10 +52,6 @@ export const _getResultMessage = (
 
           const scoreDifference = gameObject.linescore.r.diff;
 
-          // I don't know about baseball, so I'm leaving the target team and other team
-          // in each object in the array. If someone wants to confirm that teams only play
-          // single games and double headers against the same team, GameResult could change to
-          // something like { targetTeam, otherTeam, games: [{status, scoreDifferent}] }
           const gameResult: GameResult = {
             targetTeamCode: teamCode,
             otherTeamCode:
@@ -84,13 +85,26 @@ export function createMessage(gameResults: GameResult[]): string {
   const otherTeamName: string = mlbTeams[gameResults[0].otherTeamCode];
   let returnMessage: string;
 
-  if (gameResults[0].status === 'lost') {
-    returnMessage = trashTalkJSON.givenTeamLost;
-  } else if (gameResults[0].status === 'won') {
-    returnMessage = trashTalkJSON.givenTeamWon;
+  if (gameResults.length === 1) {
+    if (gameResults[0].status === 'lost') {
+      returnMessage = trashTalkJSON.givenTeamLost;
+    } else if (gameResults[0].status === 'won') {
+      returnMessage = trashTalkJSON.givenTeamWon;
+    } else {
+      //draw
+      returnMessage = trashTalkJSON.givenTeamDraw;
+    }
   } else {
-    //draw
-    returnMessage = '';
+    //double header, using array methods for better extensibility
+    if (gameResults.every(game => game.status === 'won')) {
+      returnMessage = trashTalkJSON.givenTeamDoubleWin;
+    } else if (gameResults.every(game => game.status === 'lost')) {
+      returnMessage = trashTalkJSON.givenTeamDoubleLoss;
+    } else if (gameResults.find(gameObject => gameObject.status === 'won')) {
+      returnMessage = trashTalkJSON.givenTeamWonAndLost;
+    } else {
+      returnMessage = trashTalkJSON.givenTeamDoubleDraw;
+    }
   }
 
   return returnMessage
@@ -98,60 +112,18 @@ export function createMessage(gameResults: GameResult[]): string {
     .replace('OTHERTEAM', otherTeamName);
 }
 
-export function getYesterdayResultMessage(teamCode: string): string {
-  return teamCode;
+//wrap in promise, if result messasge is '' return null, else return result message
+export function getYesterdayResultMessage(_teamCode: TeamKey): string | null {
+  let yesterday: Date = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  return `${yesterday}`;
 }
 
 // async function main() {
+//   console.log(getYesterdayResultMessage('ana'));
 //   const testDate = new Date('April 20, 2019');
 //   const team = 'atl';
 //   console.log(await _getResultMessage(testDate, team));
 // }
 
 // main();
-
-//first game object in mlbGamesTestData
-// home_code 'nya'
-// away_code 'oak'
-// linescore: {
-//   inning: [
-//     { home: '0', away: '0' },
-//     { home: '1', away: '0' },
-//     { home: '0', away: '2' },
-//     { home: '0', away: '0' },
-//     { home: '0', away: '0' },
-//     { home: '1', away: '1' },
-//     { home: '0', away: '1' },
-//     { home: '0', away: '0' },
-//     { home: '1', away: '0' },
-//   ],
-//   r: { home: '3', away: '4', diff: '1' },
-//   h: { home: '9', away: '10' },
-//   e: { home: '0', away: '0' },
-//   hr: { home: '1', away: '2' },
-//   sb: { home: '0', away: '0' },
-//   so: { home: '0', away: '0' },
-// }
-
-//6th game object in test data
-// home_code 'pit'
-// away_code 'sln'
-// linescore: {
-//   inning: [
-//     { home: '0', away: '0' },
-//     { home: '1', away: '2' },
-//     { home: '0', away: '0' },
-//     { home: '0', away: '0' },
-//     { home: '0', away: '5' },
-//     { home: '0', away: '0' },
-//     { home: '0', away: '0' },
-//     { home: '0', away: '0' },
-//     { home: '0', away: '2' },
-//   ],
-//   r: { home: '1', away: '9', diff: '8' },
-//   h: { home: '8', away: '12' },
-//   e: { home: '0', away: '0' },
-//   hr: { home: '8', away: '6' },
-//   sb: { home: '0', away: '0' },
-//   so: { home: '0', away: '0' },
-// }
