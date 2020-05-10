@@ -5884,6 +5884,13 @@ mkdirp@0.x, mkdirp@^0.5.1, mkdirp@^0.5.3:
   dependencies:
     minimist "^1.2.5"
 
+mlb-api@/mnt/c/Users/Dan/code/bball-slackbot-upgraded/workspaces/mlb-api/:
+  version "1.0.0"
+  dependencies:
+    cross-env "7.0.2"
+    mlbgames "^1.0.5"
+    serverless-wrappers "1.0.0"
+
 mlbgames@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/mlbgames/-/mlbgames-1.0.5.tgz#d3dfd5908505fc28141d48d9d6ea929e70760986"

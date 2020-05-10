@@ -9,6 +9,7 @@
   "dependencies": {
     "aws-sdk": "^2.656.0",
     "cross-env": "7.0.2",
+    "mlb-api": "/mnt/c/Users/Dan/code/bball-slackbot-upgraded/workspaces/mlb-api/",
     "source-map-support": "^0.5.10"
   },
   "devDependencies": {

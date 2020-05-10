@@ -1,5 +1,7 @@
-import { Handler, ScheduledEvent, Context } from 'aws-lambda';
-import 'source-map-support/register';
+import { Handler, ScheduledEvent, Context } from "aws-lambda";
+import "source-map-support/register";
+
+const { getYesterdayResultMessage } = require("mlb-api");
 
 /////////////////////////////////////////////////////////////////////////
 /**
@@ -7,63 +9,65 @@ import 'source-map-support/register';
  *  leaving in file as these are only used in lambdas
  */
 type InvokeLambdaParams = {
-  FunctionName: string,
-  InvocationType: string,
-  LogType: string,
-  Payload: string
-}
+  FunctionName: string;
+  InvocationType: string;
+  LogType: string;
+  Payload: string;
+};
 
 export type LambdaResponse = {
-  statusCode: number,
-  message: string,
-}
+  statusCode: number;
+  message: string;
+};
 
 export interface IRunBotOrchestratorDependencies {
-  getMessage(): LambdaResponse,
-  sendMessage(message: string): LambdaResponse,
+  getMessage(): LambdaResponse;
+  sendMessage(message: string): LambdaResponse;
 }
 /////////////////////////////////////////////////////////////////////////
 
 // need aws-sdk to invoke lambdas
-const AWS = require('aws-sdk');
-const lambda = new AWS.Lambda({ region: 'us-east-1' });
+const AWS = require("aws-sdk");
+const lambda = new AWS.Lambda({ region: "us-east-1" });
 
 // dependency injection :O
 function initDependencies(): Promise<IRunBotOrchestratorDependencies> {
   const mlbLambdaParams: InvokeLambdaParams = {
-    FunctionName: 'bball-slackbot-upgraded-dev-checkMLBGamesLambda',
-    InvocationType: 'RequestResponse',
-    LogType: 'Tail',
-    Payload: JSON.stringify({ test: 'test' })
-  }
-  
+    FunctionName: "bball-slackbot-upgraded-dev-checkMLBGamesLambda",
+    InvocationType: "RequestResponse",
+    LogType: "Tail",
+    Payload: JSON.stringify({ teamCode: "ana" }), //resplace with env
+  };
+
   const getMessage = () => {
     return lambda.invoke(mlbLambdaParams).promise();
-  }
+  };
 
   //add slack lambda when it is complete
-  const sendMessage = (message: string) => { 
+  const sendMessage = (message: string) => {
     const slackLambdaParams: InvokeLambdaParams = {
-      FunctionName: 'bball-slackbot-upgraded-dev-sendSlackMessageLambda',
-      InvocationType: 'RequestResponse',
-      LogType: 'Tail',
-      Payload: JSON.stringify({ message: message })
-    }
-    
+      FunctionName: "bball-slackbot-upgraded-dev-sendSlackMessageLambda",
+      InvocationType: "RequestResponse",
+      LogType: "Tail",
+      Payload: JSON.stringify({ message: message }),
+    };
+
     return lambda.invoke(slackLambdaParams).promise();
-  }
+  };
 
   return Promise.resolve({
     getMessage,
-    sendMessage
-  })
+    sendMessage,
+  });
 }
 
 const dependenciesReady = initDependencies();
 
-export async function runOrchestrator(dependencies: IRunBotOrchestratorDependencies): Promise<LambdaResponse> {
+export async function runOrchestrator(
+  dependencies: IRunBotOrchestratorDependencies
+): Promise<LambdaResponse> {
   const { getMessage, sendMessage } = dependencies;
-  
+
   try {
     const getMessageResponse = await getMessage();
     console.log(`getMessageResponse: `, getMessageResponse);
@@ -77,33 +81,44 @@ export async function runOrchestrator(dependencies: IRunBotOrchestratorDependenc
     return {
       statusCode: 500,
       message: `${error}`,
-    }
+    };
   }
-  
+
   return {
     statusCode: 200,
-    message: 'runOrchestrator completed successfully',
-  }
+    message: "runOrchestrator completed successfully",
+  };
 }
 
 // in aws this lambda is named bball-slackbot-upgraded-[dev/test/prod]-runBot
 // leaving as generic Handler type as ScheduledHandler is defined as Handler<ScheduledEvent, void>
 //   if confirmed never using context, change
-export const runBot: Handler<ScheduledEvent, LambdaResponse> = async (_event: ScheduledEvent, _context: Context): Promise<LambdaResponse> => {
+export const runBot: Handler<ScheduledEvent, LambdaResponse> = async (
+  _event: ScheduledEvent,
+  _context: Context
+): Promise<LambdaResponse> => {
   const dependencies = await dependenciesReady;
   return await runOrchestrator(dependencies);
-}
+};
 
 // in aws this lambda is named bball-slackbot-upgraded-[dev/test/prod]-checkMLBGamesLambda
-export const checkMLBGamesLambda: Handler = async (event, _context: Context) => {
+export const checkMLBGamesLambda: Handler = async (
+  event,
+  _context: Context
+) => {
   console.log(`in checkMLBGamesLambda`);
   console.log(`Event: \n${JSON.stringify(event, null, 2)}`);
-  return { message: 'this shows in response.payload' };
-}
+  const { teamCode } = event;
+  const returnMessage = await getYesterdayResultMessage(teamCode);
+  return { message: returnMessage };
+};
 
 // in aws this lambda is named bball-slackbot-upgraded-[dev/test/prod]-sendSlackMessageLambda
-export const sendSlackMessageLambda: Handler = async (event, _context: Context) => {
+export const sendSlackMessageLambda: Handler = async (
+  event,
+  _context: Context
+) => {
   console.log(`in sendSlackMessageLambda`);
   console.log(`Event: \n${JSON.stringify(event, null, 2)}`);
-  return 'test run';
-}
+  return "test run";
+};

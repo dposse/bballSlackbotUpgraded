@@ -41,8 +41,7 @@
   },
   "dependencies": {
     "cross-env": "7.0.2",
-    "mlbgames": "^1.0.5",
-    "serverless-wrappers": "1.0.0"
+    "mlbgames": "^1.0.5"
   },
   "jest": {
     "verbose": true
