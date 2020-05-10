@@ -36,7 +36,7 @@ function initDependencies(): Promise<IRunBotOrchestratorDependencies> {
     FunctionName: "bball-slackbot-upgraded-dev-checkMLBGamesLambda",
     InvocationType: "RequestResponse",
     LogType: "Tail",
-    Payload: JSON.stringify({ teamCode: "ana" }), //resplace with env
+    Payload: JSON.stringify({ teamCode: "bos" }), //resplace with env
   };
 
   const getMessage = () => {
@@ -75,7 +75,17 @@ export async function runOrchestrator(
     //below shows typescript error - not sure how best to fix this
     const payload = JSON.parse(getMessageResponse.Payload);
     console.log(`getMessageResponse.Payload: `, payload);
-    const messageToSend: string = payload.message;
+    const messageToSend: string | null = payload.message;
+
+    if (messageToSend == null) {
+      // === doesn't work, not sure why. above log shows { "message": null } in json and { message: null } after parsing
+      return {
+        statusCode: 200,
+        message:
+          "runOrchestrator completed successfully - no games played yesterday",
+      };
+    }
+
     await sendMessage(messageToSend);
   } catch (error) {
     return {
