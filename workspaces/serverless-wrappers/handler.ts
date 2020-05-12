@@ -32,18 +32,17 @@ const lambda = new AWS.Lambda({ region: "us-east-1" });
 
 // dependency injection :O
 function initDependencies(): Promise<IRunBotOrchestratorDependencies> {
-  const mlbLambdaParams: InvokeLambdaParams = {
-    FunctionName: "bball-slackbot-upgraded-dev-checkMLBGamesLambda",
-    InvocationType: "RequestResponse",
-    LogType: "Tail",
-    Payload: JSON.stringify({ teamCode: "bos" }), //resplace with env
-  };
-
   const getMessage = () => {
+    const mlbLambdaParams: InvokeLambdaParams = {
+      FunctionName: "bball-slackbot-upgraded-dev-checkMLBGamesLambda",
+      InvocationType: "RequestResponse",
+      LogType: "Tail",
+      Payload: JSON.stringify({ teamCode: process.env.TARGET_TEAMCODE }),
+    };
+
     return lambda.invoke(mlbLambdaParams).promise();
   };
 
-  //add slack lambda when it is complete
   const sendMessage = (message: string) => {
     const slackLambdaParams: InvokeLambdaParams = {
       FunctionName: "bball-slackbot-upgraded-dev-sendSlackMessageLambda",
