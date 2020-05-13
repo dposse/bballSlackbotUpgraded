@@ -9,6 +9,8 @@ Does a project of this scale need lambdas? No. No it does not.
 Original project here: https://github.com/snpdolan/bball_slackbot
 Thanks to [snpdolan](https://github.com/snpdolan)
 
+![design overview](./BBallSlackbot_diagram.svg "design overview")
+
 ---
 
 ### Installation
@@ -85,6 +87,8 @@ I set up serverless to read aws credentials from `~/.aws/credentials` generated 
     aws_secret_access_key=[somekey]
 
 If you remove the `profile: serverless-admin` from `serverless.yml`, it will try to use the `[default]` profile in `~/.aws/credentials`
+
+---
 
 ### Random notes
 
