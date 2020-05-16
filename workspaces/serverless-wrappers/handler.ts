@@ -1,30 +1,12 @@
+import {
+  IRunBotOrchestratorDependencies,
+  InvokeLambdaParams,
+  LambdaResponse,
+} from "./types/index";
 import { Handler, ScheduledEvent, Context } from "aws-lambda";
 import "source-map-support/register";
 
 const { getYesterdayResultMessage } = require("mlb-api");
-
-/////////////////////////////////////////////////////////////////////////
-/**
- * Types and Interfaces
- *  leaving in file as these are only used in lambdas
- */
-type InvokeLambdaParams = {
-  FunctionName: string;
-  InvocationType: string;
-  LogType: string;
-  Payload: string;
-};
-
-export type LambdaResponse = {
-  statusCode: number;
-  message: string;
-};
-
-export interface IRunBotOrchestratorDependencies {
-  getMessage(): LambdaResponse;
-  sendMessage(message: string): LambdaResponse;
-}
-/////////////////////////////////////////////////////////////////////////
 
 // need aws-sdk to invoke lambdas
 const AWS = require("aws-sdk");
@@ -34,7 +16,7 @@ const lambda = new AWS.Lambda({ region: "us-east-1" });
 function initDependencies(): Promise<IRunBotOrchestratorDependencies> {
   const getMessage = () => {
     const mlbLambdaParams: InvokeLambdaParams = {
-      FunctionName: "bball-slackbot-upgraded-dev-checkMLBGamesLambda",
+      FunctionName: <string>process.env.GET_MESSAGE_LAMBDA,
       InvocationType: "RequestResponse",
       LogType: "Tail",
       Payload: JSON.stringify({ teamCode: process.env.TARGET_TEAMCODE }),
@@ -45,7 +27,7 @@ function initDependencies(): Promise<IRunBotOrchestratorDependencies> {
 
   const sendMessage = (message: string) => {
     const slackLambdaParams: InvokeLambdaParams = {
-      FunctionName: "bball-slackbot-upgraded-dev-sendSlackMessageLambda",
+      FunctionName: <string>process.env.SEND_MESSAGE_LAMBDA,
       InvocationType: "RequestResponse",
       LogType: "Tail",
       Payload: JSON.stringify({ message: message }),
@@ -68,7 +50,7 @@ export async function runOrchestrator(
   const { getMessage, sendMessage } = dependencies;
 
   try {
-    const getMessageResponse = await getMessage();
+    const getMessageResponse: any = await getMessage();
     console.log(`getMessageResponse: `, getMessageResponse);
 
     //below shows typescript error - not sure how best to fix this
@@ -106,6 +88,7 @@ export const runBot: Handler<ScheduledEvent, LambdaResponse> = async (
   _event: ScheduledEvent,
   _context: Context
 ): Promise<LambdaResponse> => {
+  console.log(`version .9`);
   const dependencies = await dependenciesReady;
   return await runOrchestrator(dependencies);
 };
