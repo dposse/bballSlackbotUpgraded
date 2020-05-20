@@ -1,4 +1,4 @@
-import { runOrchestrator } from "../handler";
+import { runOrchestrator } from "../src/orchestrator";
 import {
   IMessageGetter,
   IMessageSender,
