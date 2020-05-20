@@ -24,10 +24,10 @@ export const checkMLBGamesLambda: Handler = async (
   event,
   _context: Context
 ) => {
-  console.log(`in checkMLBGamesLambda`);
-  console.log(`Event: \n${JSON.stringify(event, null, 2)}`);
   const { teamCode } = event;
+  console.log(`received ${teamCode} from orchestrator`);
   const returnMessage = await getYesterdayResultMessage(teamCode);
+  console.log(`sending message ${returnMessage}`);
   const payload: GetMessagePayload = { message: returnMessage };
   return payload;
 };
