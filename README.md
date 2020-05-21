@@ -43,6 +43,8 @@ I also had to add the following in `workspaces/serverless-wrappers/package.json`
 
 ### Usage
 
+Deploy from `workspaces/serverless-wrappers`.
+
 #### workspaces/mlb-api
 
 To add/change any code, the typescript compiler can be started in watch mode with `yarn start`, and tests run with `yarn test`. This was setup with TSdx.
@@ -87,6 +89,20 @@ I set up serverless to read aws credentials from `~/.aws/credentials` generated 
     aws_secret_access_key=[somekey]
 
 If you remove the `profile: serverless-admin` from `serverless.yml`, it will try to use the `[default]` profile in `~/.aws/credentials`
+
+---
+
+### Improvements
+
+#### workspaces/mlb-api
+
+The IMLBApi interface is just a get function - since I had used the mlbgames package previously, I was thinking in terms of the one function the package provides. In retrospect I think the functions defined in `mlbService.ts` (getAllGamesOnDate, getGamesPlayed) should be defined at the interface level, and have better names. listGamesOnDate, overloaded with no parameters for all games and a teamCode for games played by that team?
+
+#### workspaces/serverless-wrapper
+
+Improve the role/policy on the individual lambdas. Policies -> PolicyDocument -> Statement -> Resource is currently set to "\*" (all). I tried restricting the resources here previously but somehow removed logging permissions from the runBot handler.
+
+The dependency injection in `handler.ts` lines 8 and 18 could be moved outside of `handler.ts`.
 
 ---
 
