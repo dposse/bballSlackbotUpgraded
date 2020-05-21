@@ -29,6 +29,10 @@ functions:
       - schedule: cron(0 13 * * ? *)
       # - schedule: rate(1 minute)
     role: cronRole
+    environment:
+      GET_MESSAGE_LAMBDA: bball-slackbot-upgraded-dev-checkMLBGamesLambda
+      SEND_MESSAGE_LAMBDA: bball-slackbot-upgraded-dev-sendSlackMessageLambda
+      TARGET_TEAMCODE: bos
   checkMLBGamesLambda:
     handler: handler.checkMLBGamesLambda
   sendSlackMessageLambda:

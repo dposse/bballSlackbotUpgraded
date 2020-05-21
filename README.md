@@ -45,6 +45,8 @@ I also had to add the following in `workspaces/serverless-wrappers/package.json`
 
 Deploy from `workspaces/serverless-wrappers`.
 
+Some data is set in environment variables: lambda FunctionName required when a lambda invokes another lambda, teamcode being sent to mlb api. These are currently set in the `serverless.yml`. If you want to change these on the AWS console directly, remove them from `serverless.yml` otherwise any future deployments through serverless will overwrite any changes.
+
 #### workspaces/mlb-api
 
 To add/change any code, the typescript compiler can be started in watch mode with `yarn start`, and tests run with `yarn test`. This was setup with TSdx.
