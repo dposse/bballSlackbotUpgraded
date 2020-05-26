@@ -4,5 +4,8 @@
   "dependencies": {
     "cross-env": "7.0.2",
     "serverless-wrappers": "1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.3"
   }
 }
