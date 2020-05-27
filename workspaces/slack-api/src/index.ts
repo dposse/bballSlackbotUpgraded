@@ -1,3 +1,3 @@
-const testString: string = "sup fool";
+const testString = 'sup fool';
 
 console.log(testString);
