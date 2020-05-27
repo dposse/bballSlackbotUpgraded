@@ -6,3 +6,4 @@ coverage/
 
 # compiled typescript folders
 lib/
+dist/

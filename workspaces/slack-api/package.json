@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "dependencies": {
     "cross-env": "7.0.2",
-    "serverless-wrappers": "1.0.0"
+    "serverless-wrappers": "1.0.0",
+    "typescript": "^3.9.3"
   },
   "devDependencies": {
     "typescript": "^3.9.3"

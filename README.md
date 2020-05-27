@@ -122,11 +122,19 @@ to
       modulesDir: path.resolve(__dirname, '../node_modules')
     })],
 
+---
+
 I think it would have been easier to install jest in root or `workspaces/`, but I wanted to have each workspace have its own dependencies in case a service wasn't in javascript/typescript. I was having issues getting jest to work correctly with typescript, and ended up using [this repo](https://github.com/tgensol/serverless-typescript-jest) as a template.
+
+---
 
 After creating the three lambdas, I found out about AWS step functions. That might be a cleaner solution, although the current setup with an orchestrator lambda might be more portable if you wanted to change cloud providers.
 
+---
+
 For the mlb-api workspace, I wanted to test [TSdx](https://github.com/jaredpalmer/tsdx) as it was recommended in the typescript handbook for developing libraries. So far I have not noticed any downsides, but I do not have extensive experience with typescript yet. The jest tests take about 30 seconds to run, but I am not sure if that is an issue with TSdx, or my local machine/wsl setup.
+
+---
 
 It took me a bit to wrap my head around dependency injection while also not exposing the dependency to the end user. Under the hood we are using the npm package `mlbgames` due to it having the most straightforward way of finding if a team won on a given day. Initially I created one function taking the api as an argument (yay dependency injection) but of course if this is the function exposed to the consumer, they would have to import mlbgames and send it as an argument. Currying the function ended up being what I was looking for; the original curry function:
 
@@ -137,6 +145,12 @@ could be easily tested with a mock api thanks to dependency injection, and the e
     export const getAllGamesOnDate = _getAllGamesOnDate(mlbApi);
 
 I have included 'draw' in gameResult status, but I did not include logic to check for double header draws, as my limited research in baseball shows that ties are incredibly rare. Also the message strings are only decided by wins/losses, but I did include scoreDifference so there could be different messages based on how much a team won/lost by.
+
+---
+
+Apparently at some point I installed `node-typescript` on my WSL ubuntu. This was locking the global `tsc` to version 2.7.2. `npm i -g typescript@latest` would not upgrade it to current (3.9.3 at the time of writing), `npm uninstall typescript` or any variations wouldn't get rid of tsc. Installing typescript locally as a dev dependency in this project would show typescript installed at 3.9.3, but `tsc -v` in any shell would override this with 2.7.2. I didn't know that `node-typescript` was installed so it took some time to figure out that was overriding tsc globally. `apt remove node-typescript` solved the problem.
+
+I found this from tsc throwing an error that `"declarationMap": true` in tsconfig is not supported.
 
 #### Jest Issue
 
