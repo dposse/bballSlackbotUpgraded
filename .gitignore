@@ -7,3 +7,6 @@ coverage/
 # compiled typescript folders
 lib/
 dist/
+
+# environment variables
+.env
