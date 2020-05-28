@@ -96,6 +96,8 @@ If you remove the `profile: serverless-admin` from `serverless.yml`, it will try
 
 To add/change any code, the typescript compiler can be started in watch mode with `yarn build:watch`, and tests run with `yarn test` or `yarn test:watch`. `yarn build:watch` isn't required to run for testing as jest runs with ts-jest.
 
+If you are running this project with npm instead of yarn, change `yarn build` in `build:watch` script to `npm run build`.
+
 This was primarily set up using [this](https://medium.com/@admin_86118/testing-typescript-node-with-jest-6bf5db18119c) as a template. Notes in [random notes](#Random-Notes)
 
 ---
@@ -111,6 +113,10 @@ The IMLBApi interface is just a get function - since I had used the mlbgames pac
 Improve the role/policy on the individual lambdas. Policies -> PolicyDocument -> Statement -> Resource is currently set to "\*" (all). I tried restricting the resources here previously but somehow removed logging permissions from the runBot handler.
 
 The dependency injection in `handler.ts` lines 8 and 18 could be moved outside of `handler.ts`.
+
+#### workspaces/slack-api
+
+`package.json` scripts use `rm -rf` which could be a problem for windows users. Can be replaced with rimraf. Also the `build:watch` script uses `yarn build`, but of course you could be using npm.
 
 ---
 
