@@ -12,5 +12,15 @@ module.exports = {
   rules: {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     // e.g. "@typescript-eslint/explicit-function-return-type": "off",
+    '@typescript-eslint/no-unused-vars': 'off', // already covered by typescript errors
   },
+  overrides: [
+    {
+      // don't lint compiled js after tsc runs
+      files: ['dist/*'],
+      rules: {
+        'prettier/prettier': 'off',
+      },
+    },
+  ],
 };
