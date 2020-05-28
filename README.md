@@ -92,6 +92,12 @@ I set up serverless to read aws credentials from `~/.aws/credentials` generated 
 
 If you remove the `profile: serverless-admin` from `serverless.yml`, it will try to use the `[default]` profile in `~/.aws/credentials`
 
+#### workspaces/slack-api
+
+To add/change any code, the typescript compiler can be started in watch mode with `yarn build:watch`, and tests run with `yarn test` or `yarn test:watch`. `yarn build:watch` isn't required to run for testing as jest runs with ts-jest.
+
+This was primarily set up using [this](https://medium.com/@admin_86118/testing-typescript-node-with-jest-6bf5db18119c) as a template. Notes in [random notes](#Random-Notes)
+
 ---
 
 ### Improvements
@@ -144,6 +150,8 @@ could be easily tested with a mock api thanks to dependency injection, and the e
 
     export const getAllGamesOnDate = _getAllGamesOnDate(mlbApi);
 
+---
+
 I have included 'draw' in gameResult status, but I did not include logic to check for double header draws, as my limited research in baseball shows that ties are incredibly rare. Also the message strings are only decided by wins/losses, but I did include scoreDifference so there could be different messages based on how much a team won/lost by.
 
 ---
@@ -151,6 +159,49 @@ I have included 'draw' in gameResult status, but I did not include logic to chec
 Apparently at some point I installed `node-typescript` on my WSL ubuntu. This was locking the global `tsc` to version 2.7.2. `npm i -g typescript@latest` would not upgrade it to current (3.9.3 at the time of writing), `npm uninstall typescript` or any variations wouldn't get rid of tsc. Installing typescript locally as a dev dependency in this project would show typescript installed at 3.9.3, but `tsc -v` in any shell would override this with 2.7.2. I didn't know that `node-typescript` was installed so it took some time to figure out that was overriding tsc globally. `apt remove node-typescript` solved the problem.
 
 I found this from tsc throwing an error that `"declarationMap": true` in tsconfig is not supported.
+
+---
+
+For slack-api, I knew the code involved would be minimal (and snpdolan did the mvp already!) so I wanted to learn a little bit more about tooling I've seen in a lot of larger projects. I started with eslint and prettier, and changed two things from default. Remove the 'no-unused-vars':
+
+    {
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off'
+      }
+    }
+
+This is reduntant since I have this in tsconfig.json:
+
+    {
+      "compilerOptions": {
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
+      }
+    }
+
+Second turn off prettier in `dist/`:
+
+    overrides: [
+      {
+        // don't lint compiled js after tsc runs
+        files: ['dist/*'],
+        rules: {
+          'prettier/prettier': 'off',
+        },
+      },
+    ]
+
+Without this eslint/prettier throws an error on the files in `dist/`. Personally I think eslint/prettier shouldn't touch anything after transpilation.
+
+I liked the `package.json` scripts found in [this post by Josh Lunsford](https://medium.com/@admin_86118/testing-typescript-node-with-jest-6bf5db18119c) as well as the use of ts-jest and test coverage.
+
+One problem was his tsconfig setup caused errors in test files due to:
+
+    "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts"]
+
+With the exclude VSCode throws "Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i @types/jest` or `npm i @types/mocha`.ts(2582)"
+
+To fix this there are now two tsconfigs. The base `tsconfig.json` only has `"compilerOptions": {...}` so VSCode integrates jest and typescript correctly. `tsconfig.build.json` extends `tsconfig.json` and excludes the test directory so the build script will only transpile the source code to `dist/`.
 
 #### Jest Issue
 
