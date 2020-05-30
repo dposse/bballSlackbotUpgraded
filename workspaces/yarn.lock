@@ -1424,6 +1424,11 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@slack-wrench/jest-mock-web-client@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@slack-wrench/jest-mock-web-client/-/jest-mock-web-client-1.2.0.tgz#b74b7fe05b10cdafd1a8d28f36d3d9eb826d93b4"
+  integrity sha512-SyDubVeMO1WcsZMpva2Y8ziYMnwvv7vVtUR3zJtWlVKeYEx5mymQmQGFZKSg3h0lwp1csGsw9k4FiX71PAA+GA==
+
 "@slack/logger@>=1.0.0 <3.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@slack/logger/-/logger-2.0.0.tgz#6a4e1c755849bc0f66dac08a8be54ce790ec0e6b"

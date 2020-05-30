@@ -9,6 +9,7 @@
     "serverless-wrappers": "1.0.0"
   },
   "devDependencies": {
+    "@slack-wrench/jest-mock-web-client": "^1.2.0",
     "@types/jest": "^25.2.3",
     "@types/node": "^14.0.5",
     "@typescript-eslint/eslint-plugin": "^3.0.2",
@@ -25,8 +26,10 @@
   },
   "scripts": {
     "lint": "eslint 'src/**/*.{js,ts,tsx}' --quiet --fix",
-    "test": "jest --coverage",
+    "test": "jest",
     "test:watch": "jest --coverage --watchAll",
+    "test:unit": "jest slackService.spec.ts --coverage",
+    "test:integration": "jest slackIntegration.spec.ts --coverage",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "build:watch": "onchange 'src/*.ts' -- yarn build",
     "view:coverage": "serve coverage/lcov-report",

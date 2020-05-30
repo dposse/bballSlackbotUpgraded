@@ -118,6 +118,8 @@ The dependency injection in `handler.ts` lines 8 and 18 could be moved outside o
 
 `package.json` scripts use `rm -rf` which could be a problem for windows users. Can be replaced with rimraf. Also the `build:watch` script uses `yarn build`, but of course you could be using npm.
 
+Jest code coverage branch percentage is only at 50% due to not directly testing line 28.
+
 ---
 
 ### Random notes
