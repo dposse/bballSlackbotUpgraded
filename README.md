@@ -94,7 +94,7 @@ If you remove the `profile: serverless-admin` from `serverless.yml`, it will try
 
 #### workspaces/slack-api
 
-To add/change any code, the typescript compiler can be started in watch mode with `yarn build:watch`, and tests run with `yarn test` or `yarn test:watch`. `yarn build:watch` isn't required to run for testing as jest runs with ts-jest.
+To add/change any code, the typescript compiler can be started in watch mode with `yarn build:watch`, and tests run with `yarn test:unit` or `yarn test:integration`. `yarn build:watch` isn't required to run for testing as jest runs with ts-jest.
 
 If you are running this project with npm instead of yarn, change `yarn build` in `build:watch` script to `npm run build`.
 
