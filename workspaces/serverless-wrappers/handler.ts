@@ -4,6 +4,7 @@ import { initDependencies } from "./src/LambdaService";
 import { runOrchestrator } from "./src/orchestrator";
 import "source-map-support/register";
 const { getYesterdayResultMessage } = require("mlb-api");
+const { postToSlack } = require("slack-api");
 
 const dependenciesReady = initDependencies();
 
@@ -37,7 +38,10 @@ export const sendSlackMessageLambda: Handler = async (
   event,
   _context: Context
 ) => {
-  console.log(`in sendSlackMessageLambda`);
-  console.log(`Event: \n${JSON.stringify(event, null, 2)}`);
+  console.log(`event:`, event);
+  const { message } = event;
+  const channel = process.env.SLACK_CHANNEL;
+  const targetUser = process.env.TARGET_USER;
+  console.log(await postToSlack(message, channel, targetUser));
   return "test run";
 };
