@@ -42,6 +42,5 @@ export const sendSlackMessageLambda: Handler = async (
   const { message } = event;
   const channel = process.env.SLACK_CHANNEL;
   const targetUser = process.env.TARGET_USER;
-  console.log(await postToSlack(message, channel, targetUser));
-  return "test run";
+  return await postToSlack(message, channel, targetUser);
 };
