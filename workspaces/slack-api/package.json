@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "license": "MIT",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
   "dependencies": {
     "@slack/web-api": "^5.9.0",
     "cross-env": "7.0.2",
-    "dotenv": "^8.2.0",
-    "serverless-wrappers": "1.0.0"
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
     "@slack-wrench/jest-mock-web-client": "^1.2.0",
