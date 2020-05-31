@@ -100,6 +100,8 @@ If you are running this project with npm instead of yarn, change `yarn build` in
 
 This was primarily set up using [this](https://medium.com/@admin_86118/testing-typescript-node-with-jest-6bf5db18119c) as a template. Notes in [random notes](#Random-Notes)
 
+A bot authorization token from slack is required. Save it as SLACK_TOKEN in `workspaces/slack-api/.env` to run locally and as an env var on your AWS Lambda. Slack channel and target user need to be set as env vars on AWS Lambda as well.
+
 ---
 
 ### Improvements
@@ -114,11 +116,15 @@ Improve the role/policy on the individual lambdas. Policies -> PolicyDocument ->
 
 The dependency injection in `handler.ts` lines 8 and 18 could be moved outside of `handler.ts`.
 
+The mlb-api and slack-api dependencies in `package.json` use absolute paths from my system.
+
 #### workspaces/slack-api
 
 `package.json` scripts use `rm -rf` which could be a problem for windows users. Can be replaced with rimraf. Also the `build:watch` script uses `yarn build`, but of course you could be using npm.
 
 Jest code coverage branch percentage is only at 50% due to not directly testing line 28.
+
+Throw an error if no auth token is present in env vars
 
 ---
 
