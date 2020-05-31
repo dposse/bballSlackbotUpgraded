@@ -92,6 +92,16 @@ I set up serverless to read aws credentials from `~/.aws/credentials` generated 
 
 If you remove the `profile: serverless-admin` from `serverless.yml`, it will try to use the `[default]` profile in `~/.aws/credentials`
 
+#### workspaces/slack-api
+
+To add/change any code, the typescript compiler can be started in watch mode with `yarn build:watch`, and tests run with `yarn test:unit` or `yarn test:integration`. `yarn build:watch` isn't required to run for testing as jest runs with ts-jest.
+
+If you are running this project with npm instead of yarn, change `yarn build` in `build:watch` script to `npm run build`.
+
+This was primarily set up using [this](https://medium.com/@admin_86118/testing-typescript-node-with-jest-6bf5db18119c) as a template. Notes in [random notes](#Random-Notes)
+
+A bot authorization token from slack is required. Save it as SLACK_TOKEN in `workspaces/slack-api/.env` to run locally and as an env var on your AWS Lambda. Slack channel and target user need to be set as env vars on AWS Lambda as well.
+
 ---
 
 ### Improvements
@@ -105,6 +115,20 @@ The IMLBApi interface is just a get function - since I had used the mlbgames pac
 Improve the role/policy on the individual lambdas. Policies -> PolicyDocument -> Statement -> Resource is currently set to "\*" (all). I tried restricting the resources here previously but somehow removed logging permissions from the runBot handler.
 
 The dependency injection in `handler.ts` lines 8 and 18 could be moved outside of `handler.ts`.
+
+The mlb-api and slack-api dependencies in `package.json` use absolute paths from my system.
+
+Serverless throws a lot of peer dependency errors.
+
+Pretty sure webpack is bundling a ton of extra code to each lambda.
+
+#### workspaces/slack-api
+
+`package.json` scripts use `rm -rf` which could be a problem for windows users. Can be replaced with rimraf. Also the `build:watch` script uses `yarn build`, but of course you could be using npm.
+
+Jest code coverage branch percentage is only at 50% due to not directly testing line 28.
+
+Throw an error if no auth token is present in env vars
 
 ---
 
@@ -122,11 +146,19 @@ to
       modulesDir: path.resolve(__dirname, '../node_modules')
     })],
 
+---
+
 I think it would have been easier to install jest in root or `workspaces/`, but I wanted to have each workspace have its own dependencies in case a service wasn't in javascript/typescript. I was having issues getting jest to work correctly with typescript, and ended up using [this repo](https://github.com/tgensol/serverless-typescript-jest) as a template.
+
+---
 
 After creating the three lambdas, I found out about AWS step functions. That might be a cleaner solution, although the current setup with an orchestrator lambda might be more portable if you wanted to change cloud providers.
 
+---
+
 For the mlb-api workspace, I wanted to test [TSdx](https://github.com/jaredpalmer/tsdx) as it was recommended in the typescript handbook for developing libraries. So far I have not noticed any downsides, but I do not have extensive experience with typescript yet. The jest tests take about 30 seconds to run, but I am not sure if that is an issue with TSdx, or my local machine/wsl setup.
+
+---
 
 It took me a bit to wrap my head around dependency injection while also not exposing the dependency to the end user. Under the hood we are using the npm package `mlbgames` due to it having the most straightforward way of finding if a team won on a given day. Initially I created one function taking the api as an argument (yay dependency injection) but of course if this is the function exposed to the consumer, they would have to import mlbgames and send it as an argument. Currying the function ended up being what I was looking for; the original curry function:
 
@@ -136,7 +168,58 @@ could be easily tested with a mock api thanks to dependency injection, and the e
 
     export const getAllGamesOnDate = _getAllGamesOnDate(mlbApi);
 
+---
+
 I have included 'draw' in gameResult status, but I did not include logic to check for double header draws, as my limited research in baseball shows that ties are incredibly rare. Also the message strings are only decided by wins/losses, but I did include scoreDifference so there could be different messages based on how much a team won/lost by.
+
+---
+
+Apparently at some point I installed `node-typescript` on my WSL ubuntu. This was locking the global `tsc` to version 2.7.2. `npm i -g typescript@latest` would not upgrade it to current (3.9.3 at the time of writing), `npm uninstall typescript` or any variations wouldn't get rid of tsc. Installing typescript locally as a dev dependency in this project would show typescript installed at 3.9.3, but `tsc -v` in any shell would override this with 2.7.2. I didn't know that `node-typescript` was installed so it took some time to figure out that was overriding tsc globally. `apt remove node-typescript` solved the problem.
+
+I found this from tsc throwing an error that `"declarationMap": true` in tsconfig is not supported.
+
+---
+
+For slack-api, I knew the code involved would be minimal (and snpdolan did the mvp already!) so I wanted to learn a little bit more about tooling I've seen in a lot of larger projects. I started with eslint and prettier, and changed two things from default. Remove the 'no-unused-vars':
+
+    {
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off'
+      }
+    }
+
+This is reduntant since I have this in tsconfig.json:
+
+    {
+      "compilerOptions": {
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
+      }
+    }
+
+Second turn off prettier in `dist/`:
+
+    overrides: [
+      {
+        // don't lint compiled js after tsc runs
+        files: ['dist/*'],
+        rules: {
+          'prettier/prettier': 'off',
+        },
+      },
+    ]
+
+Without this eslint/prettier throws an error on the files in `dist/`. Personally I think eslint/prettier shouldn't touch anything after transpilation.
+
+I liked the `package.json` scripts found in [this post by Josh Lunsford](https://medium.com/@admin_86118/testing-typescript-node-with-jest-6bf5db18119c) as well as the use of ts-jest and test coverage.
+
+One problem was his tsconfig setup caused errors in test files due to:
+
+    "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts"]
+
+With the exclude VSCode throws "Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i @types/jest` or `npm i @types/mocha`.ts(2582)"
+
+To fix this there are now two tsconfigs. The base `tsconfig.json` only has `"compilerOptions": {...}` so VSCode integrates jest and typescript correctly. `tsconfig.build.json` extends `tsconfig.json` and excludes the test directory so the build script will only transpile the source code to `dist/`.
 
 #### Jest Issue
 
