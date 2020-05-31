@@ -118,6 +118,10 @@ The dependency injection in `handler.ts` lines 8 and 18 could be moved outside o
 
 The mlb-api and slack-api dependencies in `package.json` use absolute paths from my system.
 
+Serverless throws a lot of peer dependency errors.
+
+Pretty sure webpack is bundling a ton of extra code to each lambda.
+
 #### workspaces/slack-api
 
 `package.json` scripts use `rm -rf` which could be a problem for windows users. Can be replaced with rimraf. Also the `build:watch` script uses `yarn build`, but of course you could be using npm.
