@@ -40,6 +40,7 @@ export function convertDateToString(date: Date): string {
 }
 
 // internal curried functions for dependency injection
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const _getAllGamesOnDate = (api: IMLBApi) => (
   date: Date
 ): Promise<any[]> => {
@@ -52,6 +53,17 @@ export const _getAllGamesOnDate = (api: IMLBApi) => (
     }
   });
 };
+
+// MOVING CODE HERE FOR DEMO
+const mlbApi = new MLBApi();
+export const getAllGamesOnDate = _getAllGamesOnDate(mlbApi);
+
+export const _getAllGamesOnDate = (date) => {
+  const mlbApi = new MLBApi();
+  mlbApi.get(date);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const _getGamesPlayed = (api: IMLBApi) => (
   teamCode: string,
